@@ -1,14 +1,15 @@
 <template>
   <view>
-    <text>我是personal页面</text>
+    woshisearch yemian 
   </view>
 </template>
 
 <script>
 export default {
-  name: "Personal",
+  name: "InSearch",
 };
 </script>
 
 <style scoped>
+
 </style>

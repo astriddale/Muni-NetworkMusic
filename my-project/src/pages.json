@@ -1,27 +1,25 @@
 {
 	"pages": [{
 			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "Muni网抑云"
-			}
+			"style": {}
 		},
 		{
 			"path": "pages/personal/personal",
-			"style": {
-				"navigationBarTitleText": "Muni网抑云"
-			}
+			"style": {}
 		},
 		{
 			"path": "pages/video/video",
-			"style": {
-				"navigationBarTitleText": "Muni网抑云"
-			}
+			"style": {}
+		},
+		{
+			"path": "pages/search/InSearch",
+			"style": {}
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
+		"navigationBarTitleText": "Muni音乐",
+		"navigationBarBackgroundColor": "#d43c33",
 		"backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {

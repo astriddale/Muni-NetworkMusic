@@ -1,50 +1,79 @@
 <template>
-	<view class="content">
-		<image class="logo" src="/static/logo.png"></image>
-		<view>
-			<text class="title">{{title}}</text>
-		</view>
-		<text>woshisdad</text>
-	</view>
+  <view class="content">
+    <search class="search"></search>
+    <view>
+      <swiper
+        indicator-dots
+        autoplay
+        circular
+        class="muni-swiper"
+        indicator-color="#e6e6e6"
+        indicator-active-color="#ec4141"
+      >
+        <swiper-item>
+          <img class="swiper-img" src="~static/logo.png" alt="" srcset="" />
+        </swiper-item>
+        <swiper-item>
+          <img src="~static/logo.png" alt="" srcset="" />
+        </swiper-item>
+        <swiper-item>
+          <img src="~static/logo.png" alt="" srcset="" />
+        </swiper-item>
+        <swiper-item>
+          <img src="~static/logo.png" alt="" srcset="" />
+        </swiper-item>
+        <swiper-item>
+          <img src="~static/logo.png" alt="" srcset="" />
+        </swiper-item>
+      </swiper>
+    </view>
+    <icon-recommend />
+    <recommend />
+  </view>
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				title: 'HelloSWX'
-			}
-		},
-		onLoad() {
+// 导入组件
+import IconRecommend from "./childComps/IconRecommend.vue";
+import Recommend from "./childComps/Recommend.vue";
+import Search from "./childComps/Search.vue";
 
-		},
-		methods: {
-
-		}
-	}
+export default {
+  data() {
+    return {
+      title: "HelloSWX",
+    };
+  },
+  onLoad() {},
+  methods: {},
+  components: {
+    Search,
+    IconRecommend,
+    Recommend,
+  },
+};
 </script>
 
-<style>
-	.content {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.logo {
-		height: 200rpx;
-		width: 200rpx;
-		margin: 200rpx auto 50rpx auto;
-	}
-
-	.text-area {
-		display: flex;
-		justify-content: center;
-	}
-
-	.title {
-		font-size: 36rpx;
-		color: #8f8f94;
-	}
+<style scoped>
+.search {
+  width: 100%;
+}
+.content {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center;
+  justify-content: center; */
+}
+.muni-swiper {
+  background-color: rgb(224, 224, 224);
+  margin: 0 40rpx;
+  /* width: 90%; */
+  height: 300rpx;
+  border-radius: 15rpx;
+  overflow: hidden;
+}
+.swiper-img {
+  width: 100%;
+  height: 100%;
+}
 </style>
