@@ -1,7 +1,7 @@
 <template>
   <view class="icon-recommend">
     <view class="icon-item" v-for="(item, index) in iconText" :key="index">
-      <view class="icon">test</view>
+      <view class="icon iconfont" :class="iconList[index]"></view>
       <view class="text">{{ item }}</view>
     </view>
   </view>
@@ -12,7 +12,12 @@ export default {
   name: "IconRecommend",
   data() {
     return {
-      iconList: [],
+      iconList: [
+        "icon-meirituijian",
+        "icon-gedan1",
+        "icon-icon-ranking",
+        "icon-diantai",
+      ],
       iconText: ["每日推荐", "歌单", "排行榜", "电台"],
     };
   },
@@ -38,11 +43,13 @@ export default {
   width: 100rpx;
   height: 100rpx;
   border-radius: 50%;
-  background-color: #ec4141;
+  background-color: #f83030;
   line-height: 100rpx;
+  color: white;
+  font-size: 40rpx;
 }
-.icon-recommend .icon-item .text{
+.icon-recommend .icon-item .text {
   font-size: 30rpx;
-  color: rgb(117, 110, 110);
+  color: rgb(46, 46, 46);
 }
 </style>

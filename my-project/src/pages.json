@@ -14,6 +14,10 @@
 		{
 			"path": "pages/search/InSearch",
 			"style": {}
+		},
+		{
+			"path": "pages/login/Login",
+			"style": {}
 		}
 	],
 	"globalStyle": {
@@ -29,15 +33,21 @@
 		"borderStyle": "white",
 		"list": [{
 				"pagePath": "pages/index/index",
-				"text": "发现"
+				"text": "发现",
+				"iconPath": "static/images/tabs/music.png",
+				"selectedIconPath": "static/images/tabs/music-selected.png"
 			},
 			{
 				"pagePath": "pages/video/video",
-				"text": "视频"
+				"text": "视频",
+				"iconPath": "static/images/tabs/video.png",
+				"selectedIconPath": "static/images/tabs/video-selected.png"
 			},
 			{
 				"pagePath": "pages/personal/personal",
-				"text": "我的"
+				"text": "我的",
+				"iconPath": "static/images/tabs/mine.png",
+				"selectedIconPath": "static/images/tabs/mine-selected.png"
 			}
 		]
 	}

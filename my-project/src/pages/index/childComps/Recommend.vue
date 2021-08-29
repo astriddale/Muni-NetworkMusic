@@ -4,16 +4,19 @@
       <view class="recommend-item"> 推荐歌曲 </view>
       <view class="for-you">
         <view>为您精心推荐</view>
-        <view class="look-more">更多></view>
+        <view class="look-more"
+          >更多
+          <text class="iconfont icon-you"></text>
+        </view>
       </view>
       <scroll-view class="recommend-img" scroll-x enable-flex enhanced>
         <view
           class="recommend-img-item"
-          v-for="(item, index) in 30"
+          v-for="(result, index) in personalized"
           :key="index"
         >
-          <img src="~static/logo.png" alt="" />
-          <text>kjla善打算D啊jdfiohasdofjilkhauildfhaisudfhiusafghui</text>
+          <img :src="result.picUrl" alt="" />
+          <text>{{ result.name }}</text>
         </view>
       </scroll-view>
     </view>
@@ -21,22 +24,25 @@
     <view class="charts">
       <view class="charts-title">
         <view class="recommend-item"> 排行榜 </view>
-        <view class="look-more">更多></view>
+        <view class="look-more" @click="more">
+          更多
+          <text class="iconfont icon-you"></text>
+        </view>
       </view>
       <swiper circular class="charts-content" next-margin="100rpx">
-        <swiper-item v-for="(item, index) in 10" :key="index">
-          <view class="charts-content-title">标题</view>
+        <swiper-item v-for="item in topList ? topList : ''" :key="item.id">
+          <view class="charts-content-title">{{ item.name }}</view>
           <view
             class="content-item-info"
-            v-for="(ins, indez) in 30"
-            :key="indez"
+            v-for="(tracks, index) in item.tracks ? item.tracks : ''"
+            :key="tracks.id"
           >
-            <img class="content-img" src="~static/logo.png" alt="" />
+            <img class="content-img" :src="tracks.al.picUrl" alt="" lazy-load />
             <view class="content-item-name">
-              <text class="content-count">1</text>
-              <text class="content-name">歌曲名字</text>
+              <text class="content-count">{{ index + 1 }}</text>
+              <text class="content-name">{{ tracks.name }}</text>
               <text class="content-rename">--</text>
-              <text class="content-rename">歌手名字</text>
+              <text class="content-rename">{{ tracks.ar[0].name }}</text>
             </view>
           </view>
         </swiper-item>
@@ -48,6 +54,24 @@
 <script>
 export default {
   name: "Recommend",
+  data() {
+    return {};
+  },
+  props: {
+    personalized: {
+      type: Array,
+      default: [],
+    },
+    topList: {
+      type: Array,
+      default: [],
+    },
+  },
+  methods: {
+    more() {
+      console.log(this.topList[0]);
+    },
+  },
 };
 </script>
 
@@ -86,10 +110,15 @@ export default {
   border: 1px solid #ccc;
   border-radius: 40rpx;
 }
+.recommend .look-more text {
+  font-size: 30rpx;
+  margin-left: 10rpx;
+  line-height: 30rpx;
+}
 .recommend .recommend-img {
   display: flex;
   white-space: nowrap;
-  height: 300rpx;
+  height: 270rpx;
 }
 .recommend .recommend-img .recommend-img-item {
   width: 200rpx;
@@ -131,6 +160,10 @@ export default {
   display: flex;
   margin: 10rpx 0;
 }
+/*显示高度 */
+.charts-content {
+  height: 500rpx;
+}
 .charts-content .charts-content-title {
   margin-top: 20rpx;
 }
@@ -147,9 +180,15 @@ export default {
   margin-left: 20rpx;
   font-size: 32rpx;
   color: black;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .charts-content .content-item-name .content-rename {
   color: rgb(145, 145, 145);
   font-size: 24rpx;
+}
+.content-name {
+  margin-left: 20rpx;
 }
 </style>

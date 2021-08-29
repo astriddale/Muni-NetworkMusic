@@ -10,25 +10,14 @@
         indicator-color="#e6e6e6"
         indicator-active-color="#ec4141"
       >
-        <swiper-item>
-          <img class="swiper-img" src="~static/logo.png" alt="" srcset="" />
-        </swiper-item>
-        <swiper-item>
-          <img src="~static/logo.png" alt="" srcset="" />
-        </swiper-item>
-        <swiper-item>
-          <img src="~static/logo.png" alt="" srcset="" />
-        </swiper-item>
-        <swiper-item>
-          <img src="~static/logo.png" alt="" srcset="" />
-        </swiper-item>
-        <swiper-item>
-          <img src="~static/logo.png" alt="" srcset="" />
+        <swiper-item v-for="banner in banners" :key="banner.bannnerId">
+          <img class="swiper-img" :src="banner.pic" alt="" srcset="" />
         </swiper-item>
       </swiper>
     </view>
     <icon-recommend />
-    <recommend />
+    <recommend :topList="allTopListData" :personalized="personalized" />
+    <bottom-bar />
   </view>
 </template>
 
@@ -37,19 +26,70 @@
 import IconRecommend from "./childComps/IconRecommend.vue";
 import Recommend from "./childComps/Recommend.vue";
 import Search from "./childComps/Search.vue";
+import BottomBar from "./childComps/BottomBar.vue";
 
 export default {
   data() {
     return {
-      title: "HelloSWX",
+      banners: [],
+      personalized: [],
+      toplist: [],
+      topListData: [],
+      allTopListData: [],
+      allTopList: [],
     };
   },
-  onLoad() {},
+  onLoad() {
+    // 获取轮播图数据
+    this.$request({
+      url: "/banner",
+      data: { type: 2 },
+    }).then((res) => {
+      this.banners = res.banners;
+    });
+    // 获取推荐歌曲数据
+    this.$request({
+      url: "/personalized",
+    }).then((res) => {
+      this.personalized = res.result;
+    });
+
+    // 排行榜swiper当前所处的current
+    let currentPage = 0;
+
+    // 获取排行榜列表
+    this.$request({ url: "/toplist" }).then((res) => {
+      this.toplist = res.list;
+      let index = 0;
+      while (index < 5) {
+        this.$request({
+          url: "/playlist/detail",
+          data: {
+            id: this.toplist[index].id,
+          },
+        }).then((res) => {
+          this.topListData = res;
+          // 存放所有排行榜完整数据
+          this.allTopList.push(this.topListData.playlist.tracks);
+          // console.log(this.allTopList)
+          let listItem = {
+            name: this.topListData.playlist.name,
+            id: this.topListData.playlist.id,
+            tracks: this.topListData.playlist.tracks.slice(0, 3),
+          };
+
+          this.allTopListData.push(listItem);
+        });
+        index++;
+      }
+    });
+  },
   methods: {},
   components: {
     Search,
     IconRecommend,
     Recommend,
+    BottomBar,
   },
 };
 </script>
