@@ -1,16 +1,29 @@
 <template>
   <view class="personalContainer">
     <view class="user-section">
-      <image class="bg" src="/static/images/personal/bgImg2.jpg" />
+      <image
+        class="bg"
+        :src="
+          userInfo.backgroundUrl
+            ? userInfo.backgroundUrl
+            : '/static/images/personal/bgImg2.jpg'
+        "
+      />
       <view class="user-info-box">
         <view class="portrait-box">
           <image
             class="portrait"
-            src="/static/images/personal/missing-face.png"
+            :src="
+              userInfo.avatarUrl
+                ? userInfo.avatarUrl
+                : '/static/images/personal/missing-face.png'
+            "
           ></image>
         </view>
         <view class="info-box" @click="toLogin">
-          <text class="username">游客</text>
+          <text class="username">{{
+            userInfo.nickname ? userInfo.nickname : "游客"
+          }}</text>
         </view>
       </view>
 
@@ -65,13 +78,17 @@
           <text class="title">最近播放</text>
           <!-- 最近播放记录 -->
           <scroll-view
-            v-if="false"
+            v-if="record.length > 0"
             scroll-x="true"
             class="recentScroll"
             enable-flex="true"
           >
-            <view class="recentItem">
-              <image src=""></image>
+            <view
+              class="recentItem"
+              v-for="records in record"
+              :key="records.song.id"
+            >
+              <image :src="records.song.al.picUrl" />
             </view>
           </scroll-view>
           <view class="swx-login" v-else
@@ -82,17 +99,92 @@
         </view>
 
         <view class="cardList">
-          <view class="card-item">
-            <text class="title">我的音乐</text>
-            <text class="more iconfont icon-you"></text>
+          <view class="card-item" @click="likeMusic">
+            <text class="title">喜欢音乐</text>
+            <text
+              class="more iconfont"
+              :class="isLike ? 'icon-you' : 'icon-xia'"
+            ></text>
+            <view>
+              <view v-if="isLogin && !isLike">
+                <view class="like-music">
+                  <view>
+                    <img :src="userLikeMusic[0].coverImgUrl" alt="" />
+                  </view>
+                  <view class="like-music-t">
+                    <view class="like-music-t1">{{
+                      userLikeMusic[0].name
+                    }}</view>
+                    <view class="like-music-t2"
+                      >{{ userLikeMusic[0].trackCount }}首</view
+                    >
+                  </view>
+                </view>
+              </view>
+              <view class="swx-login" v-else-if="!isLike"
+                >请
+                <text @click="toLogin">登录</text>
+                后查看
+              </view>
+            </view>
           </view>
-          <view class="card-item">
-            <text class="title">我的收藏</text>
-            <text class="more iconfont icon-you"></text>
+          <view class="card-item" @click="createMusic">
+            <text class="title">创建歌单</text>
+            <text
+              class="more iconfont"
+              :class="isCreate ? 'icon-you' : 'icon-xia'"
+            ></text>
+            <view>
+              <view v-if="isLogin && !isCreate">
+                <view
+                  class="like-music"
+                  v-for="item in userCreateMusic"
+                  :key="item.id"
+                >
+                  <view>
+                    <img :src="item.coverImgUrl" alt="" />
+                  </view>
+                  <view class="like-music-t">
+                    <view class="like-music-t1">{{ item.name }}</view>
+                    <view class="like-music-t2">{{ item.trackCount }}首</view>
+                  </view>
+                </view>
+              </view>
+              <view class="swx-login" v-else-if="!isCreate"
+                >请
+                <text @click="toLogin">登录</text>
+                后查看
+              </view>
+            </view>
           </view>
-          <view class="card-item">
-            <text class="title">我的电台</text>
-            <text class="more iconfont icon-you"></text>
+          <view class="card-item" @click="recomMusic">
+            <text class="title">收藏歌单</text>
+            <text
+              class="more iconfont"
+              :class="isRecom ? 'icon-you' : 'icon-xia'"
+            ></text>
+            <view>
+              <view v-if="isLogin && !isRecom">
+                <view
+                  class="like-music"
+                  v-for="item in userRecomMusic"
+                  :key="item.id"
+                >
+                  <view>
+                    <img :src="item.coverImgUrl" alt="" />
+                  </view>
+                  <view class="like-music-t">
+                    <view class="like-music-t1">{{ item.name }}</view>
+                    <view class="like-music-t2">{{ item.trackCount }}首</view>
+                  </view>
+                </view>
+              </view>
+              <view class="swx-login" v-else-if="!isRecom"
+                >请
+                <text @click="toLogin">登录</text>
+                后查看
+              </view>
+            </view>
           </view>
         </view>
       </view>
@@ -114,16 +206,91 @@ export default {
       movePosition: 0,
       translate: "translateY(0)",
       transition: "",
+      // 存储本地缓存的用户信息
+      userInfo: {},
+      // 存储播放记录
+      record: [],
+      isLike: true,
+      isCreate: true,
+      isRecom: true,
+      // 用户喜欢的音乐
+      userLikeMusic: [],
+      // 用户创建的音乐
+      userCreateMusic: [],
+      // 用户收藏的音乐
+      userRecomMusic: [],
+      isLogin: false,
     };
   },
+  onLoad() {
+    // 获取本地缓存
+    this.getUserInfo();
+    // 获取用户播放记录的数据
+    this.getUserRecord();
+    // 获取用户歌单
+    this.getUserLikeMusic();
+  },
   methods: {
+    // 获取用户歌单
+    getUserLikeMusic() {
+      this.$request({
+        url: "/user/playlist",
+        data: {
+          uid: this.userInfo.userId,
+        },
+      }).then((res) => {
+        if (res) {
+          this.userLikeMusic = res.playlist.splice(0, 1);
+          this.userCreateMusic = res.playlist.splice(1, 13);
+          this.userRecomMusic = res.playlist;
+          // console.log(this.userLikeMusic);
+          // console.log(this.userCreateMusic);
+          // console.log(this.userRecomMusic);
+        }
+        this.isLogin = uni.getStorageSync("isLogin");
+      });
+    },
+    // 控制是否显示歌单
+    likeMusic() {
+      this.isLike = !this.isLike;
+    },
+    createMusic() {
+      this.isCreate = !this.isCreate;
+    },
+    recomMusic() {
+      this.isRecom = !this.isRecom;
+    },
+    // 获取本地缓存数据
+    getUserInfo() {
+      let userInfo = uni.getStorageSync("userInfo");
+      if (userInfo) {
+        this.userInfo = JSON.parse(userInfo);
+      }
+      // console.log(this.userInfo);
+    },
+    // 获取用户播放记录的数据
+    getUserRecord() {
+      this.$request({
+        url: "/user/record",
+        data: {
+          uid: this.userInfo.userId,
+          type: 0,
+        },
+      }).then((res) => {
+        this.record = res.allData.splice(0, 13);
+        // console.log(this.record);
+      });
+    },
+    // 跳转登录页面
     toLogin() {
       uni.navigateTo({ url: "/pages/login/Login" });
     },
+    // 触摸屏幕事件
     touchStart(event) {
       this.transition = "";
       this.positionY = event.touches[0].clientY;
     },
+    // 移动屏幕事件
     touchMove(event) {
       this.movePosition = event.touches[0].clientY - this.positionY;
       // this.lastPosition = this.movePosition - this.positionY;
@@ -134,6 +301,7 @@ export default {
       }
       this.translate = `translateY(${this.movePosition}rpx)`;
     },
+    // 放开屏幕事件
     touchEnd(event) {
       this.translate = "translateY(0)";
       this.transition = "transform 1s linear";
@@ -333,7 +501,7 @@ export default {
 }
 .cardList .card-item {
   border-top: 1rpx solid #eee;
-  height: 80rpx;
+  /* height: 80rpx; */
   line-height: 80rpx;
   padding: 10rpx;
   font-size: 26rpx;
@@ -363,5 +531,31 @@ export default {
 
 .swx-login text {
   color: red;
+}
+/* 修改个人页面下拉喜欢菜单的样式 */
+.like-music {
+  display: flex;
+}
+.like-music img {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 15rpx;
+  margin-left: 10rpx;
+}
+.like-music-t {
+  /* position: absolute; */
+  margin-left: 20rpx;
+}
+.like-music .like-music-t1 {
+  height: 30rpx;
+  font-size: 30rpx;
+  color: black;
+  margin-bottom: 15rpx;
+  margin-top: -15rpx;
+}
+.like-music .like-music-t2 {
+  height: 24rpx;
+  font-size: 24rpx;
+  color: rgb(168, 168, 168);
 }
 </style>

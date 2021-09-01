@@ -39,7 +39,11 @@
             <input type="text" placeholder="请输入验证码" v-model="passcode" />
           </view>
           <view class="code-btn">
-            <button :disabled="codeTimer" :class="{ active: !coderTimer }">
+            <button
+              :disabled="codeTimer"
+              :class="{ active: !coderTimer }"
+              @click="codeBtn"
+            >
               {{ title }}
             </button>
           </view>
@@ -76,9 +80,14 @@ export default {
       isPass: true,
       codeTimer: false,
       title: "获取验证码",
+      timer: 30,
     };
   },
+  onLoad() {
+    uni.hideLoading();
+  },
   methods: {
+    // 登录功能的实现
     login() {
       if (!this.phone) {
         uni.showToast({
@@ -107,14 +116,21 @@ export default {
         data: {
           phone: this.phone,
           password: this.password,
+          isLogin: true,
         },
       }).then((res) => {
+        // console.log(res)
         if (res.code === 200) {
           uni.showToast({
             title: "登录成功",
             icon: "success",
             mask: true,
           });
+          this.$store.commit("changeLogin", true);
+          uni.setStorageSync("userInfo", JSON.stringify(res.profile));
+          setTimeout(() => {
+            uni.reLaunch({ url: "/pages/personal/personal" });
+          }, 1000);
         } else if (res.code === 502) {
           uni.showToast({
             title: "密码错误",
@@ -139,9 +155,107 @@ export default {
         }
       });
     },
-    toRegister() {},
+    // 跳转到注册页面
+    toRegister() {
+      uni.navigateTo({ url: "/pages/register/Register" });
+    },
+    // 修改登录方式
     changeLogin() {
       this.isPass = !this.isPass;
+    },
+    // 获取验证码事件
+    codeBtn() {
+      if (!this.phone) {
+        uni.showToast({
+          title: "手机号码不能为空",
+          icon: "none",
+          mask: true,
+        });
+        return;
+      } else if (!/^1[3|4|5|7|8|9][0-9]{9}$/.test(this.phone)) {
+        uni.showToast({
+          title: "手机号码输入格式错误",
+          icon: "none",
+          mask: true,
+        });
+        return;
+      }
+      let timer = setInterval(() => {
+        if (this.timer > 0) {
+          this.timer--;
+          this.codeTimer = true;
+          this.title = `请${this.timer}s后重试`;
+        } else {
+          this.codeTimer = false;
+          this.title = "获取验证码";
+          this.timer = 30;
+          clearInterval(timer);
+        }
+      }, 1000);
+      // 发送获取验证码的请求
+      this.$request({
+        url: "/captcha/sent",
+        data: {
+          phone: this.phone,
+        },
+      });
+    },
+    // 验证码登录
+    codeLogin() {
+      if (!this.phone) {
+        uni.showToast({
+          title: "手机号码不能为空",
+          icon: "none",
+          mask: true,
+        });
+        return;
+      } else if (!this.passcode) {
+        uni.showToast({
+          title: "验证码不能为空",
+          icon: "none",
+          mask: true,
+        });
+        return;
+      } else if (!/^1[3|4|5|7|8|9][0-9]{9}$/.test(this.phone)) {
+        uni.showToast({
+          title: "手机号码输入格式错误",
+          icon: "none",
+          mask: true,
+        });
+        return;
+      }
+      // 验证码是否正确
+      this.$request({
+        url: "/captcha/verify",
+        data: {
+          phone: this.phone,
+          captcha: this.passcode,
+        },
+      }).then((res) => {
+        console.log(res);
+        if (res.code === 200) {
+          uni.showToast({
+            title: "登录成功",
+            icon: "success",
+            mask: true,
+          });
+          setTimeout(() => {
+            uni.reLaunch({ url: "/pages/personal/personal" });
+          }, 1000);
+        } else if (res.code === 503) {
+          uni.showToast({
+            title: "验证码错误",
+            icon: "none",
+            mask: true,
+          });
+        } else {
+          uni.showToast({
+            title: "网络错误，请稍后重试",
+            icon: "none",
+            mask: true,
+          });
+        }
+      });
     },
   },
 };

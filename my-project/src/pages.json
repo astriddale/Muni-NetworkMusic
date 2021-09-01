@@ -1,5 +1,13 @@
 {
 	"pages": [{
+			"path": "pages/videoplayer/VideoPlayer",
+			"style": {
+				"navigationBarTitleText": "视频中心"
+			}
+		}, {
+			"path": "pages/video/video",
+			"style": {}
+		}, {
 			"path": "pages/index/index",
 			"style": {}
 		},
@@ -7,18 +15,24 @@
 			"path": "pages/personal/personal",
 			"style": {}
 		},
-		{
-			"path": "pages/video/video",
-			"style": {}
-		},
+
 		{
 			"path": "pages/search/InSearch",
 			"style": {}
 		},
 		{
+			"path": "pages/register/Register",
+			"style": {
+				"navigationBarTitleText": "注册"
+			}
+		},
+		{
 			"path": "pages/login/Login",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
 		}
+
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

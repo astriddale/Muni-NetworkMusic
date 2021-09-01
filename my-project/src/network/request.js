@@ -11,7 +11,15 @@ export default function request({
       method: method,
       data: data,
       timeout: 10000,
+      header: {
+        cookie: uni.getStorageSync('cookies') ? uni.getStorageSync('cookies').find(item => {
+          return item.indexOf('MUSIC_U') !== -1
+        }) : ''
+      },
       success: (res) => {
+        if (data.isLogin) {
+          uni.setStorageSync('cookies', res.cookies)
+        }
         resolve(res.data)
       },
       fail: (res) => {
