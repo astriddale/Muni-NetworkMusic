@@ -1,5 +1,8 @@
 <template>
   <view class="content">
+    <!-- <view>
+      <mp-loading type="circle" show="true"></mp-loading>
+    </view> -->
     <search class="search"></search>
     <view>
       <swiper
@@ -16,8 +19,35 @@
       </swiper>
     </view>
     <icon-recommend />
-    <recommend :topList="allTopListData" :personalized="personalized" />
-    <bottom-bar />
+    <recommend
+      :topList="allTopListData"
+      :personalized="personalized"
+      :flag="flag"
+    />
+    <bottom-bar v-show="!isShowMenu" @playMenu="showPlayMenu" ref="bottom" />
+    <!-- 菜单列表 -->
+    <!-- 幕布 -->
+    <view class="mu-bu" @click="showPlayMenu" v-show="isShowMenu"></view>
+    <view class="music-menu" :class="{ 'is-show-menu': isShowMenu }">
+      <view class="menu-title">正在播放</view>
+      <scroll-view scroll-y enable-flex class="menu-context">
+        <view class="menu-context-item" v-if="musicPlaylist.length <= 0"
+          >暂无音乐可以播放</view
+        >
+        <view
+          v-else
+          v-for="(item, index) in musicPlaylist"
+          :key="item[index].id"
+          class="menu-context-item"
+          @click="changeMusic(index)"
+        >
+          <text class="music-name"> {{ item.name }} </text>
+          <text>-</text>
+          <text class="musicner-name"> {{ item.ar[0].name }} </text>
+          <text class="quxiao">X</text>
+        </view>
+      </scroll-view>
+    </view>
   </view>
 </template>
 
@@ -37,7 +67,20 @@ export default {
       topListData: [],
       allTopListData: [],
       allTopList: [],
+
+      // musicPlaylist: [],
+      // currentIndex: "",
+      // musicId: "",
+      // playlistId: "",
+      isShowMenu: false,
+      musicPlaylist: [],
     };
+  },
+  components: {
+    Search,
+    IconRecommend,
+    Recommend,
+    BottomBar,
   },
   onLoad() {
     // 获取轮播图数据
@@ -53,10 +96,6 @@ export default {
     }).then((res) => {
       this.personalized = res.result;
     });
-
-    // 排行榜swiper当前所处的current
-    let currentPage = 0;
-
     // 获取排行榜列表
     this.$request({ url: "/toplist" }).then((res) => {
       this.toplist = res.list;
@@ -77,19 +116,25 @@ export default {
             id: this.topListData.playlist.id,
             tracks: this.topListData.playlist.tracks.slice(0, 3),
           };
-
           this.allTopListData.push(listItem);
         });
         index++;
       }
     });
+    // 获取歌单数据，若果有的话
+    this.musicPlaylist = uni.getStorageSync("musicPlaylist");
   },
-  methods: {},
-  components: {
-    Search,
-    IconRecommend,
-    Recommend,
-    BottomBar,
+  methods: {
+    showPlayMenu(res) {
+      this.isShowMenu = !this.isShowMenu;
+    },
+    changeMusic(index) {
+      this.$refs.bottom.musicPlay.stop();
+      this.$refs.bottom.getMusicDetail(this.musicPlaylist[index].id);
+      this.$refs.bottom.currentIndex = index;
+      uni.setStorageSync("currentIndex", index);
+      uni.setStorageSync("musicId", this.musicPlaylist[index].id);
+    },
   },
 };
 </script>
@@ -116,5 +161,73 @@ export default {
   width: 100%;
   height: 100%;
   border-radius: 15rpx;
+}
+
+/* 播放列表样式 */
+.music-menu {
+  position: fixed;
+  bottom: -550rpx;
+  z-index: 100;
+  width: 90%;
+  margin: 0 20rpx;
+  border-radius: 30rpx;
+  padding: 20rpx;
+  background-color: rgb(255, 255, 255);
+  transition: transform 0.3s linear;
+}
+/* 控制是否显示菜单列表 */
+.is-show-menu {
+  transform: translateY(calc(500rpx - 100vh));
+  z-index: 100;
+}
+.music-menu .menu-title {
+  height: 60rpx;
+  line-height: 60rpx;
+  font-size: 36rpx;
+  color: #000;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+.menu-context {
+  height: 400rpx;
+}
+.menu-context .menu-context-item {
+  height: 60rpx;
+  line-height: 60rpx;
+  /* background-color: rgb(241, 81, 81); */
+  margin: 40rpx 0;
+  display: flex;
+  position: relative;
+}
+.menu-context .menu-context-item .music-name {
+  font-size: 34rpx;
+  display: block;
+  word-spacing: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180rpx;
+}
+.menu-context .menu-context-item .musicner-name {
+  display: block;
+  font-size: 26rpx;
+  color: rgb(139, 139, 139);
+  word-spacing: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180rpx;
+}
+.quxiao {
+  position: absolute;
+  top: 5rpx;
+  bottom: 5rpx;
+  right: 10rpx;
+}
+.mu-bu {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(104, 104, 104, 0.2);
 }
 </style>

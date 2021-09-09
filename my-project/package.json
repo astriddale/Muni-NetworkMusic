@@ -83,8 +83,10 @@
     "jest": "^25.4.0",
     "mini-types": "*",
     "miniprogram-api-typings": "*",
+    "moment": "^2.29.1",
     "postcss-comment": "^2.0.0",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "weui-miniprogram": "^1.1.0"
   },
   "browserslist": [
     "Android >= 4",

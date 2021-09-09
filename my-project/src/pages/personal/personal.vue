@@ -55,7 +55,7 @@
       <!-- 个人中心导航 -->
       <view class="nav-section">
         <view class="nav-item" hover-class="common-hover" hover-stay-time="50">
-          <text class="iconfont icon-xiaoxi"></text>
+          <text class="iconfont icon-wodexiaoxi-copy"></text>
           <text>我的消息</text>
         </view>
         <view class="nav-item" hover-class="common-hover" hover-stay-time="50">
@@ -67,7 +67,7 @@
           <text>个人主页</text>
         </view>
         <view class="nav-item" hover-class="common-hover" hover-stay-time="50">
-          <text class="iconfont icon-gexingzhuangban"></text>
+          <text class="iconfont icon-gexinghua"></text>
           <text>个性装扮</text>
         </view>
       </view>
@@ -85,10 +85,11 @@
           >
             <view
               class="recentItem"
-              v-for="records in record"
+              v-for="(records, index) in record"
               :key="records.song.id"
+              @click="toMusicPage(records.song.id, index)"
             >
-              <image :src="records.song.al.picUrl" />
+              <image :src="records.song.al.picUrl" lazy-load />
             </view>
           </scroll-view>
           <view class="swx-login" v-else
@@ -99,25 +100,28 @@
         </view>
 
         <view class="cardList">
-          <view class="card-item" @click="likeMusic">
-            <text class="title">喜欢音乐</text>
+          <view class="card-item">
+            <text class="title" @click="likeMusic">喜欢音乐</text>
             <text
               class="more iconfont"
               :class="isLike ? 'icon-you' : 'icon-xia'"
             ></text>
             <view>
               <view v-if="isLogin && !isLike">
-                <view class="like-music">
+                <view
+                  class="like-music"
+                  @click="toPlaylist(userLikeMusic[0].id)"
+                >
                   <view>
                     <img :src="userLikeMusic[0].coverImgUrl" alt="" />
                   </view>
                   <view class="like-music-t">
-                    <view class="like-music-t1">{{
-                      userLikeMusic[0].name
-                    }}</view>
-                    <view class="like-music-t2"
-                      >{{ userLikeMusic[0].trackCount }}首</view
-                    >
+                    <view class="like-music-t1">
+                      {{ userLikeMusic[0].name }}
+                    </view>
+                    <view class="like-music-t2">
+                      {{ userLikeMusic[0].trackCount }}首
+                    </view>
                   </view>
                 </view>
               </view>
@@ -128,8 +132,8 @@
               </view>
             </view>
           </view>
-          <view class="card-item" @click="createMusic">
-            <text class="title">创建歌单</text>
+          <view class="card-item">
+            <text class="title" @click="createMusic">创建歌单</text>
             <text
               class="more iconfont"
               :class="isCreate ? 'icon-you' : 'icon-xia'"
@@ -140,6 +144,7 @@
                   class="like-music"
                   v-for="item in userCreateMusic"
                   :key="item.id"
+                  @click="toPlaylist(item.id)"
                 >
                   <view>
                     <img :src="item.coverImgUrl" alt="" />
@@ -157,8 +162,8 @@
               </view>
             </view>
           </view>
-          <view class="card-item" @click="recomMusic">
-            <text class="title">收藏歌单</text>
+          <view class="card-item">
+            <text class="title" @click="recomMusic">收藏歌单</text>
             <text
               class="more iconfont"
               :class="isRecom ? 'icon-you' : 'icon-xia'"
@@ -169,6 +174,7 @@
                   class="like-music"
                   v-for="item in userRecomMusic"
                   :key="item.id"
+                  @click="toPlaylist(item.id)"
                 >
                   <view>
                     <img :src="item.coverImgUrl" alt="" />
@@ -231,6 +237,27 @@ export default {
     this.getUserLikeMusic();
   },
   methods: {
+    // 跳转歌曲列表页面
+    toPlaylist(id) {
+      // console.log("歌单id:", id);
+      uni.navigateTo({
+        url: "/pages/playlist/Playlist?id=" + id,
+      });
+    },
+    // 跳转歌曲页面
+    toMusicPage(id, index) {
+      uni.navigateTo({
+        url:
+          "/pages/musicplayer/MusicPlayer?id=" +
+          id +
+          "&index=" +
+          index +
+          "&playlistId=" +
+          this.userLikeMusic[0].id,
+      });
+      // 提交vuex改变当前歌单的数据
+      this.$store.commit("changeMusicPlaylist", this.record);
+    },
     // 获取用户歌单
     getUserLikeMusic() {
       this.$request({
@@ -482,7 +509,10 @@ export default {
   display: flex;
 }
 
-.recentPlayContainer .title {
+.title {
+  display: inline-block;
+  width: 600rpx;
+  height: 60rpx;
   padding-left: 20rpx;
   font-size: 26rpx;
   color: #333;

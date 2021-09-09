@@ -26,7 +26,12 @@
               class="video-item"
               @click="toVideoPlay(video)"
             >
-              <img class="video-item-img" :src="video.data.coverUrl" alt="" />
+              <img
+                class="video-item-img"
+                :src="video.data.coverUrl"
+                alt=""
+                lazy-load
+              />
               <view class="video-item-title">
                 {{
                   video.type == 1
@@ -134,20 +139,7 @@ export default {
       // 一更新currentIndex的值，本函数会调用自身（递归）
       this.$parent.currentIndex = index;
     },
-    // 点击去视频页面的事件
-    toVideoPlay(video) {
-      // console.log(video);
-      let type = video.type;
-      let data = video.data.vid || video.data.id;
-      console.log(data, type);
-      uni.navigateTo({
-        url:
-          "/pages/videoplayer/VideoPlayer?videoid=" +
-          data +
-          "&videotype=" +
-          type,
-      });
-    },
+
     // 自定义下拉刷新事件
     onRefresh() {
       // 加载组件
@@ -160,6 +152,10 @@ export default {
     // 自定义上拉加载事件
     tolower() {
       // 获取新一页的数据并且push进allVideoDAtas数据集里
+      uni.showLoading({
+        title: "视频加载中",
+        mask: true,
+      });
       this.$request({
         url: "/video/group",
         data: {
@@ -174,6 +170,19 @@ export default {
         this.allVideoDatas[this.currentIndex].push(...result);
         // 获取到数据以后关闭加载组件
         uni.hideLoading();
+      });
+    },
+    // 点击去视频页面的事件
+    toVideoPlay(video) {
+      // console.log(video);
+      let type = video.type;
+      let data = video.data.vid || video.data.id;
+      uni.navigateTo({
+        url:
+          "/pages/videoplayer/VideoPlayer?videoid=" +
+          data +
+          "&videotype=" +
+          type,
       });
     },
   },

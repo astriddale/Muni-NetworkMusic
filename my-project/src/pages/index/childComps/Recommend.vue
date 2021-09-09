@@ -4,7 +4,7 @@
       <view class="recommend-item"> 推荐歌曲 </view>
       <view class="for-you">
         <view>为您精心推荐</view>
-        <view class="look-more"
+        <view class="look-more" @click="toMoreList"
           >更多
           <text class="iconfont icon-you"></text>
         </view>
@@ -14,8 +14,9 @@
           class="recommend-img-item"
           v-for="(result, index) in personalized"
           :key="index"
+          @click="totoPlaylist(result.id)"
         >
-          <img :src="result.picUrl" alt="" />
+          <img :src="result.picUrl" alt="" lazy-load />
           <text>{{ result.name }}</text>
         </view>
       </scroll-view>
@@ -24,18 +25,26 @@
     <view class="charts">
       <view class="charts-title">
         <view class="recommend-item"> 排行榜 </view>
-        <view class="look-more" @click="more">
+        <view class="look-more" @click="toChart">
           更多
           <text class="iconfont icon-you"></text>
         </view>
       </view>
-      <swiper circular class="charts-content" next-margin="100rpx">
-        <swiper-item v-for="item in topList ? topList : ''" :key="item.id">
-          <view class="charts-content-title">{{ item.name }}</view>
+      <swiper
+        circular
+        class="charts-content"
+        next-margin="100rpx"
+        v-if="topList.length != 0"
+      >
+        <swiper-item v-for="(item, indez) in topList" :key="item.id">
+          <view class="charts-content-title" @click="toPlaylist(item.id)">
+            {{ item.name }}
+          </view>
           <view
             class="content-item-info"
-            v-for="(tracks, index) in item.tracks ? item.tracks : ''"
+            v-for="(tracks, index) in item.tracks"
             :key="tracks.id"
+            @click="toMusicPage(tracks.id, indez, index)"
           >
             <img class="content-img" :src="tracks.al.picUrl" alt="" lazy-load />
             <view class="content-item-name">
@@ -68,8 +77,53 @@ export default {
     },
   },
   methods: {
-    more() {
-      console.log(this.topList[0]);
+    // 跳转歌单页面
+    toPlaylist(id) {
+      console.log(id)
+      uni.navigateTo({
+        url: "/pages/playlist/Playlist?id=" + id,
+      });
+    },
+    //跳转歌曲播放页面
+    toMusicPage(id, indez, index) {
+      uni.navigateTo({
+        url:
+          "/pages/musicplayer/MusicPlayer?id=" +
+          id +
+          "&index=" +
+          index +
+          "&playlistId=" +
+          this.topList[indez].id,
+      });
+      // 获取当前歌曲所在歌单数据并且存储在vuex中
+      this.$request({
+        url: "/playlist/detail",
+        data: {
+          id: this.topList[indez].id,
+        },
+      }).then((res) => {
+        // console.log("res",res)
+        // 把数据进行提交至vuex
+        this.$store.commit("changeMusicPlaylist", res.playlist.tracks);
+      });
+    },
+    // 跳转歌曲列表页面
+    totoPlaylist(id) {
+      uni.navigateTo({
+        url: "/pages/playlist/Playlist?id=" + id,
+      });
+    },
+    // 跳转排行榜页面
+    toChart() {
+      uni.navigateTo({
+        url: "/pages/index/pages/ChartPlaylist",
+      });
+    },
+    // 跳转更多推荐歌单页面
+    toMoreList() {
+      uni.navigateTo({
+        url: "/pages/index/pages/RecommendPlaylist",
+      });
     },
   },
 };

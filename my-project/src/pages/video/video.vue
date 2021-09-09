@@ -5,7 +5,7 @@
     <scroll-view
       scroll-x
       enable-flex
-      :scroll-into-view="'swx' + currentIndex"
+      :scroll-into-view="'swx' + getIndex"
       scroll-with-animation
       class="category-list"
     >
@@ -59,7 +59,7 @@ export default {
     let userInfo = uni.getStorageSync("userInfo");
     // 判断是否有，没有则显示需要登录并且定向到登录页面
     if (!userInfo) {
-      wx.showToast({
+      uni.showToast({
         title: "请先登录",
         icon: "none",
         success: () => {
@@ -73,6 +73,11 @@ export default {
     }
     // 获取导航栏的数据
     this.getCategroyList();
+  },
+  computed: {
+    getIndex() {
+      return this.currentIndex > 2 ? this.currentIndex - 1 : 0;
+    },
   },
   methods: {
     // 切换导航栏的index值
@@ -192,8 +197,9 @@ export default {
 }
 .category-list {
   display: flex;
-  background-color: #d43c33;
+  background-color: #dc2c1f;
   height: 60rpx;
+  color: rgb(20, 20, 20);
 }
 .category-list .category-list-item {
   height: 56rpx;
@@ -206,7 +212,7 @@ export default {
 }
 .list-item-border {
   border-bottom: 2rpx solid rgb(255, 255, 255);
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 /*  */

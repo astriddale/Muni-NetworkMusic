@@ -1,6 +1,11 @@
 <template>
   <view class="icon-recommend">
-    <view class="icon-item" v-for="(item, index) in iconText" :key="index">
+    <view
+      class="icon-item"
+      v-for="(item, index) in iconText"
+      :key="index"
+      @click="toPaghes(index)"
+    >
       <view class="icon iconfont" :class="iconList[index]"></view>
       <view class="text">{{ item }}</view>
     </view>
@@ -13,13 +18,37 @@ export default {
   data() {
     return {
       iconList: [
-        "icon-meirituijian",
-        "icon-gedan1",
-        "icon-icon-ranking",
+        "icon-tuijian",
+        "icon-gedan",
+        "icon-paixingbang",
         "icon-diantai",
       ],
       iconText: ["每日推荐", "歌单", "排行榜", "电台"],
     };
+  },
+  methods: {
+    toPaghes(index) {
+      // console.log(index);
+      if (index === 0) {
+        uni.navigateTo({
+          url: "/pages/index/pages/RecommendedDaily",
+        });
+      } else if (index === 1) {
+        console.log("歌单广场");
+        uni.navigateTo({
+          url: "/pages/index/pages/IndexPlaylist",
+        });
+      } else if (index === 2) {
+        uni.navigateTo({
+          url: "/pages/index/pages/ChartPlaylist",
+        });
+      } else {
+        console.log("电台");
+        uni.navigateTo({
+          url: "/pages/index/pages/RecommendedDaily",
+        });
+      }
+    },
   },
 };
 </script>

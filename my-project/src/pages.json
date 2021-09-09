@@ -1,25 +1,60 @@
 {
-	"pages": [{
-			"path": "pages/videoplayer/VideoPlayer",
-			"style": {
-				"navigationBarTitleText": "视频中心"
-			}
-		}, {
-			"path": "pages/video/video",
+	"pages": [
+
+		{
+			"path": "pages/search/InSearch",
 			"style": {}
 		}, {
 			"path": "pages/index/index",
 			"style": {}
 		},
 		{
+			"path": "pages/index/pages/IndexPlaylist",
+			"style": {
+				"navigationBarTitleText": "歌单广场"
+			}
+		},
+		{
+			"path": "pages/index/pages/RecommendPlaylist",
+			"style": {
+				"navigationBarTitleText": "推荐歌单"
+			}
+		},
+		{
+			"path": "pages/index/pages/ChartPlaylist",
+			"style": {
+				"navigationBarTitleText": "排行榜"
+			}
+		},
+		{
+			"path": "pages/index/pages/RecommendedDaily",
+			"style": {
+				"navigationBarTitleText": "每日推荐",
+				"navigationBarBackgroundColor": "#573e1f",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/video/video",
+			"style": {}
+		},
+		{
+			"path": "pages/musicplayer/MusicPlayer",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/musicplayer/childComps/Recommend",
+			"style": {
+				"navigationBarTitleText": "歌曲评论"
+			}
+		},
+		{
 			"path": "pages/personal/personal",
 			"style": {}
 		},
 
-		{
-			"path": "pages/search/InSearch",
-			"style": {}
-		},
 		{
 			"path": "pages/register/Register",
 			"style": {
@@ -31,13 +66,29 @@
 			"style": {
 				"navigationBarTitleText": "登录"
 			}
+		},
+		{
+			"path": "pages/videoplayer/VideoPlayer",
+			"style": {
+				"navigationBarTitleText": "视频中心"
+			}
+		},
+		{
+			"path": "pages/playlist/Playlist",
+			"style": {
+				"navigationStyle": "custom"
+
+			}
 		}
 
 	],
+	"usingComponents": {
+		"mp-loading": "weui-miniprogram/loading/loading"
+	},
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
+		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "Muni音乐",
-		"navigationBarBackgroundColor": "#d43c33",
+		"navigationBarBackgroundColor": "#dc2c1f",
 		"backgroundColor": "#F8F8F8"
 	},
 	"tabBar": {
@@ -65,4 +116,5 @@
 			}
 		]
 	}
+
 }
