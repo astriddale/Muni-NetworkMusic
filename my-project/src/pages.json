@@ -1,10 +1,5 @@
 {
-	"pages": [
-
-		{
-			"path": "pages/search/InSearch",
-			"style": {}
-		}, {
+	"pages": [{
 			"path": "pages/index/index",
 			"style": {}
 		},
@@ -60,6 +55,10 @@
 			"style": {
 				"navigationBarTitleText": "注册"
 			}
+		},
+		{
+			"path": "pages/search/InSearch",
+			"style": {}
 		},
 		{
 			"path": "pages/login/Login",

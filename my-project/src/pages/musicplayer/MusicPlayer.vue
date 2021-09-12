@@ -4,7 +4,10 @@
     <view class="iconfont icon-zuo iconfont-zuo" @click="goBack"></view>
     <img
       class="music-background"
-      :src="musicPlaylist[musicIndex].al.picUrl"
+      :src="
+        musicPlaylist[musicIndex].al.picUrl ||
+        musicPlaylist[musicIndex].al.artist.img1v1Url
+      "
       alt=""
       lazy-load
     />
@@ -46,7 +49,7 @@
             />
             <img
               class="zhuan-pan-item2"
-              :src="item.al.picUrl"
+              :src="item.al.picUrl || item.al.artist.img1v1Url"
               alt=""
               lazy-load
             />
