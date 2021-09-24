@@ -406,6 +406,7 @@ export default {
       this.currentWidth = event.detail.value;
 
       await this.musicPlay.play();
+      
 
       // 处理播放时间跳转时歌词位置的校准
       if (this.lyrics.length > 1) {
