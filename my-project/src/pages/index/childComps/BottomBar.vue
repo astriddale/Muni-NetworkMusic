@@ -79,9 +79,11 @@ export default {
 
     // 设置musicPlay为背景音频播放的实例
     this.musicPlay = uni.getBackgroundAudioManager();
+    // 设置手播放音乐
+    // this.musicPlay.pause();
     // 设置音频的来源
-    // 判断为空时，跳过这次播放
-    if (this.musicPlaylist.length > 0) {
+    // 判断为空时，跳过这次播放并且读取vuex里面的播放状态，当点击暂停后，必须同步播放
+    if (this.musicPlaylist.length > 0 && this.$store.state.isPlay) {
       this.getMusicDetail(this.musicId);
       // 必填，播放音乐的标题，不填不播放也不报错
       this.musicPlay.title = this.musicPlaylist[this.currentIndex].name;
@@ -136,7 +138,7 @@ export default {
     this.playlistId = uni.getStorageSync("playlistId");
     // 设置音频的来源
     // 判断为空时，跳过这次播放
-    if (this.musicPlaylist.length > 0) {
+    if (this.musicPlaylist.length > 0 && this.$store.state.isPlay) {
       this.getMusicDetail(this.musicId);
       // 必填，播放音乐的标题，不填不播放也不报错
       this.musicPlay.title = this.musicPlaylist[this.currentIndex].name;
