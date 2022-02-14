@@ -20,6 +20,7 @@
             placeholder="请输入密码"
             id="password"
             v-model="password"
+            @keyup.enter="login"
           />
         </view>
       </view>
